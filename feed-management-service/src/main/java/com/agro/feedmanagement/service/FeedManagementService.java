@@ -1,16 +1,19 @@
 package com.agro.feedmanagement.service;
 
 import java.util.List;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agro.feedmanagement.controller.FeedManagementController;
 import com.agro.feedmanagement.dto.FeedEventMessage;
 import com.agro.feedmanagement.dto.FeedRequest;
 import com.agro.feedmanagement.dto.FeedResponse;
 import com.agro.feedmanagement.entity.FeedRecord;
 import com.agro.feedmanagement.exception.FeedRecordNotFoundException;
+import com.agro.feedmanagement.messaging.FeedEventProducer;
 import com.agro.feedmanagement.repository.FeedRecordRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +25,7 @@ public class FeedManagementService {
 	private final FeedRecordRepository repository;
 	private final FeedEventProducer eventProducer;
 
-	private static final Logger log = Logger.getLogger(FeedManagementService.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(FeedManagementController.class);
 
 	public FeedManagementService(FeedRecordRepository repository, FeedEventProducer eventProducer) {
 		super();
