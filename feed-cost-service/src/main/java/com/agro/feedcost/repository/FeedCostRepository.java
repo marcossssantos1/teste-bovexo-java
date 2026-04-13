@@ -1,13 +1,12 @@
 package com.agro.feedcost.repository;
 
-import com.agro.feedcost.entity.FeedCost;
-import com.agro.feedcost.entity.FeedType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
-@Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.agro.feedcost.entity.FeedCost;
+import com.agro.feedcost.entity.FeedType;
+
 public interface FeedCostRepository extends JpaRepository<FeedCost, Long> {
 
     Optional<FeedCost> findByFeedType(FeedType feedType);
