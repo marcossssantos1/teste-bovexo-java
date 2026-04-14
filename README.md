@@ -1,4 +1,4 @@
-# 🌱 Plataforma de Gestão de Nutrição Animal
+# Plataforma de Gestão de Nutrição Animal
 
 Sistema baseado em microsserviços para gestão de consumo de ração e análise nutricional animal.
 
