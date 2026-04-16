@@ -49,7 +49,41 @@ docker compose up -d
 
 Isso sobe o MySQL, MongoDB e RabbitMQ automaticamente.
 
-### 2. Subir os serviços na ordem
+### 2. Configurar o IP do ambiente (WSL2 ou Linux)
+
+> **Importante:** se a IDE estiver rodando no Windows com Docker no WSL2, a aplicação não consegue acessar os containers via `localhost`. É necessário usar o IP da interface de rede do WSL2.
+
+Para descobrir o IP, rode no terminal do WSL2:
+
+```bash
+ip addr show eth0 | grep "inet "
+```
+
+O retorno será algo como:
+```
+inet 172.28.153.162/20
+```
+
+Atualize o `application.properties` de cada serviço substituindo `localhost` pelo IP encontrado:
+
+**feed-management-service e feed-cost-service:**
+```properties
+spring.datasource.url=jdbc:mysql://SEU_IP:3306/nome_do_banco?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+spring.rabbitmq.host=SEU_IP
+```
+
+**nutrition-analysis-service:**
+```properties
+spring.data.mongodb.uri=mongodb://SEU_IP:27017/nutrition_db
+spring.rabbitmq.host=SEU_IP
+feedcost.service.url=http://localhost:8082
+```
+
+> **Nota:** o `feedcost.service.url` permanece como `localhost` pois o `nutrition-analysis-service` acessa o `feed-cost-service` diretamente pelo Windows, não pelo Docker.
+
+---
+
+### 3. Subir os serviços na ordem
 
 ```bash
 # 1º
@@ -61,6 +95,27 @@ cd nutrition-analysis-service && mvn spring-boot:run
 # 3º
 cd feed-management-service && mvn spring-boot:run
 ```
+
+---
+
+## Configuração do docker-compose
+
+O MySQL 8 por padrão restringe o usuário `root` para conectar apenas internamente. Para permitir conexões externas (necessário quando a aplicação roda fora do Docker), o `MYSQL_ROOT_HOST: '%'` deve estar configurado no serviço:
+
+```yaml
+mysql:
+  image: mysql:8.0
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_ROOT_HOST: '%'
+```
+
+> **Atenção:** o `MYSQL_ROOT_HOST` só é aplicado na **primeira inicialização** do container. Se o volume já existia anteriormente, é necessário recriar tudo do zero:
+> ```bash
+> docker compose down -v
+> docker system prune -af
+> docker compose up -d
+> ```
 
 ---
 
@@ -118,6 +173,15 @@ GET http://localhost:8082/cost/MILHO
 4. Consulta o custo do insumo no `feed-cost-service` via REST
 5. Calcula o custo total (`quantity × costPerKg`)
 6. Salva a análise no MongoDB
+
+**Exemplo de validação do fluxo completo:**
+```
+POST http://localhost:8081/feeds
+{ "animalId": "animal-01", "feedType": "MILHO", "quantity": 10.5 }
+
+GET http://localhost:8083/analysis/animal-01
+→ totalCost: 26.25 (10.5 × 2.50)
+```
 
 ---
 
