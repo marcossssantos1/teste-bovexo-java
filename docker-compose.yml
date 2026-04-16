@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   mysql:
     image: mysql:8.0
     container_name: mysql
@@ -10,6 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_CHARACTER_SET_SERVER: utf8mb4
       MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+      MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
     volumes:
