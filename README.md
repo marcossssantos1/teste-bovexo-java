@@ -28,6 +28,7 @@ Cliente → feed-management-service → RabbitMQ → nutrition-analysis-service 
 - MySQL 8.0
 - MongoDB
 - Docker
+- Springdoc OpenAPI (Swagger)
 
 ---
 
@@ -95,6 +96,20 @@ cd nutrition-analysis-service && mvn spring-boot:run
 # 3º
 cd feed-management-service && mvn spring-boot:run
 ```
+
+---
+
+## Documentação com Swagger
+
+Cada serviço expõe sua documentação interativa via Swagger UI. Com os serviços no ar, acesse:
+
+| Serviço | URL |
+|---------|-----|
+| feed-management-service | http://localhost:8081/swagger-ui.html |
+| feed-cost-service | http://localhost:8082/swagger-ui.html |
+| nutrition-analysis-service | http://localhost:8083/swagger-ui.html |
+
+O Swagger permite visualizar todos os endpoints, seus parâmetros, exemplos de requisição e resposta, e testar as chamadas diretamente pelo navegador.
 
 ---
 
